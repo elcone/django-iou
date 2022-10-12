@@ -13,3 +13,12 @@ class UserCreateView(APIView):
         serializer = serializers.UserSerializer(user)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class LoanCreateView(APIView):
+    def post(self, request):
+        serializer = serializers.LoanCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        loan = serializer.save()
+
+        return Response(request.data, status=status.HTTP_201_CREATED)

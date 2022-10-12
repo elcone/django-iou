@@ -21,4 +21,5 @@ from loans import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('add', views.UserCreateView.as_view(), name='create_user'),
+    path('iou', views.LoanCreateView.as_view(), name='create_loan'),
 ]
