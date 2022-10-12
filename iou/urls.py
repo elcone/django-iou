@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from graphene_django.views import GraphQLView
 
 from loans import views
 
@@ -23,4 +24,5 @@ urlpatterns = [
     path('add', views.UserCreateView.as_view(), name='create_user'),
     path('iou', views.LoanCreateView.as_view(), name='create_loan'),
     path('settleup', views.UserListView.as_view(), name='list_users'),
+    path('expired_iou', GraphQLView.as_view(graphiql=True), name='expired_loans'),
 ]
