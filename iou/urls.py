@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('add', views.UserCreateView.as_view(), name='create_user'),
     path('iou', views.LoanCreateView.as_view(), name='create_loan'),
+    path('settleup', views.UserListView.as_view(), name='list_users'),
 ]

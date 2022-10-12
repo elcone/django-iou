@@ -6,6 +6,8 @@ from . import managers
 class User(models.Model):
     name = models.CharField('Name', max_length=100)
 
+    objects = managers.UserQuerySet.as_manager()
+
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'

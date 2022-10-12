@@ -12,9 +12,32 @@ class UserCreateSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    owes = serializers.SerializerMethodField()
+    owed_by = serializers.SerializerMethodField()
+    balance = serializers.SerializerMethodField()
+
     class Meta:
         model = models.User
-        fields = ['name']
+        fields = ['name', 'owes', 'owed_by', 'balance']
+
+    def get_owes(self, obj):
+        return {
+            balance.lender.name: balance.balance
+            for balance
+            in obj.owes.all()
+            if balance.balance > 0.00
+        }
+
+    def get_owed_by(self, obj):
+        return {
+            balance.borrower.name: balance.balance
+            for balance
+            in obj.owed_by.all()
+            if balance.balance > 0.00
+        }
+
+    def get_balance(self, obj):
+        return obj.balance
 
 
 class LoanCreateSerializer(serializers.Serializer):
