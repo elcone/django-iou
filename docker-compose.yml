@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  django_iou:
+    image: django-iou
+    container_name: django-iou
+    build: .
+    ports:
+      - "8000:8000"
+    command: gunicorn --bind 0.0.0.0:8000 --workers 4 iou.wsgi
