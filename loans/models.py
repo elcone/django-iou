@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 
 from . import managers
 
@@ -32,6 +32,39 @@ class Loan(models.Model):
 
     def __str__(self):
         return f'{self.lender.name} lend {self.amount:,.2f} to {self.borrower.name}'
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        is_new = False if self.pk else True
+        super().save(*args, **kwargs)
+
+        if is_new:
+            self.update_balances()
+
+    def update_balances(self):
+        lender_balance, lender_is_new = UserBalance.objects.get_or_create(
+            lender=self.lender,
+            borrower=self.borrower,
+            defaults={'balance': self.amount})
+
+        borrower_balance, borrower_is_new = UserBalance.objects.get_or_create(
+            lender=self.borrower,
+            borrower=self.lender,
+            defaults={'balance': 0.0})
+
+        if not lender_is_new:
+            if borrower_balance.balance > 0.00 and self.amount >= borrower_balance.balance:
+                lender_balance.balance = self.amount - borrower_balance.balance
+                borrower_balance.balance = 0
+
+            elif borrower_balance.balance > 0.00 and self.amount < borrower_balance.balance:
+                borrower_balance.balance -= self.amount
+
+            else:
+                lender_balance.balance += self.amount
+
+            lender_balance.save()
+            borrower_balance.save()
 
 
 class UserBalance(models.Model):
