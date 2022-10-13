@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
@@ -8,7 +9,14 @@ class UserCreateSerializer(serializers.Serializer):
     user = serializers.CharField(max_length=100)
 
     def create(self, validated_data):
-        return models.User.objects.create(name=validated_data.get('user'))
+        try:
+            user = models.User.objects.create(name=validated_data.get('user'))
+        except IntegrityError:
+            raise serializers.ValidationError({
+                'name': 'Already existing user name.'
+            })
+
+        return user
 
 
 class UserSerializer(serializers.ModelSerializer):
