@@ -4,7 +4,7 @@ from . import managers
 
 
 class User(models.Model):
-    name = models.CharField('Name', max_length=100)
+    name = models.CharField('Name', max_length=100, unique=True)
 
     objects = managers.UserQuerySet.as_manager()
 
